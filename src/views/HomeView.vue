@@ -6,6 +6,8 @@ const data = ref([]);
 
 const title= ref('');
 const auther= ref('');
+const edittitle= ref('');
+const editauther= ref('');
 
 async function getData() {
   try {
@@ -31,6 +33,24 @@ async function addData() {
     } catch (error) {
       console.error("Xatolik yuz berdi:", error);
     }
+  }
+}
+async function deleteData(id) {
+  try {
+    await axios.delete(`http://localhost:5000/api/books/${id}`);
+    getData(); 
+  } catch (error) {
+    console.error("Xatolik yuz berdi:", error);
+  }
+}
+async function getIDData(id) {
+  try {
+    const res= await axios.get(`http://localhost:5000/api/books/${id}`);
+    console.log(res.data);
+    edittitle.value=res.data.title;
+    editauther.value=res.data.author;
+  } catch (error) {
+    console.error("Xatolik yuz berdi:", error);
   }
 }
 
@@ -69,10 +89,14 @@ async function addData() {
   </div>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
       <div v-for="(item,itemKey) in data" class='shadow-lg rounded-md flex flex-col'>
-        <img src="https://cdn.culture.ru/images/a7d5c2ba-87af-51f8-9305-034fa71dd4a1" alt="Book" class="rounded-t-md">
+        <img src="https://cdn.culture.ru/images/a7d5c2ba-87af-51f8-9305-034fa71dd4a1" @click="getIDData(item.id)" alt="Book" class="rounded-t-md">
         <span class="p-2 rounded-md ">
         <h2 class="text-xl font-bold text-gray-800 mt-4">{{item.title}}</h2>
         <p class="text-gray-600">{{item.author }}</p>
+        </span>
+        <span class="p-2 rounded-md grid grid-cols-2 gap-2">
+        <button type="" @click="deleteData(item.id)" class="bg-red-500 rounded-md text-white cursor-pointer transition-all duration-200 hover:scale-95">Delete</button>
+        <button type="" class="bg-orange-500 rounded-md text-white cursor-pointer transition-all duration-200 hover:scale-95">Edit</button>
         </span>
       </div>
     </div>
